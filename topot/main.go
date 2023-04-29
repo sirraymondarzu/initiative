@@ -3,21 +3,21 @@ import
 (
 	"log"
 	"net/http"
-	"fmt"
+	//"fmt"
 )
-//handler  function
-func home(w http.ResponseWriter, r *http.Request){
-	w.Write([]byte("Hi we are topot."))
-	fmt.Println("hello world")
-}
+
 
 func main(){
-	//create a new servemux
-	mux := http.NewServeMux()
-	mux.HandleFunc("/",home)
+	//create a file server
+	fileServer := http.FileServer(http.Dir("."))
+
+
+
+
+	
     //create a web server
 	log.Println("Starting server on port :4000")
-	err := http.ListenAndServe(":4000",mux)
+	err := http.ListenAndServe(":4000",fileServer)
 	log.Fatal(err)
 
 }
