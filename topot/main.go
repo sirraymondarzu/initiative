@@ -8,7 +8,7 @@ import
 //handler  function
 func home(w http.ResponseWriter, r *http.Request){
 	w.Write([]byte("Hi we are topot."))
-	//fmt.Println("hello world")j
+	fmt.Println("hello world")
 }
 
 func main(){
