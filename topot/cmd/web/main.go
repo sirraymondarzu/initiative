@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv" // converts string to other
 	"time"
 )
 
@@ -36,11 +37,43 @@ func displayTime(w http.ResponseWriter, r *http.Request) {
 }
 
 func getValues(w http.ResponseWriter, r *http.Request) {
-	
+	if r.Method == "GET" {
+		ts, _ := template.ParseFiles("./ui/html/input.area.page.tmpl")
+		ts.Execute(w, nil)
+	} else {
+		http.Redirect(w, r, "/area-calculator-2", http.StatusTemporaryRedirect)
+		//if post metod is selected
+	}
 
 }
-func calucateArea(w http.ResponseWriter, r *http.Request) {
-	
+func calculateArea(w http.ResponseWriter, r *http.Request) {
+	// sending multiple peices of data using a struct
+	type UserData struct {
+		Length float64
+		Width  float64
+		Area   float64
+	}
+	// get the length and the width for the form
+	r.ParseForm()
+
+	// save the values
+	length := r.PostForm.Get("length")
+	width := r.PostForm.Get("width")
+	// calculate the area
+	lengthORectangle, _ := strconv.ParseFloat(length, 64)
+	widthORectangle, _ := strconv.ParseFloat(width, 64)
+	areaORectangle := lengthORectangle * widthORectangle
+
+	// create instande of the UserData
+	data := UserData{
+		Length: lengthORectangle,
+		Width:  widthORectangle,
+		Area:   areaORectangle,
+	}
+
+	// call the template engine
+	ts, _ := template.ParseFiles("./ui/html/display.area.page.tmpl")
+	ts.Execute(w, data)
 
 }
 
@@ -51,14 +84,14 @@ func main() {
 
 	// url for time
 	mux.HandleFunc("/time", displayTime)
-	mux.HandleFunc("area-calculator", getValues)
-	mux.HandleFunc("area-calculator-2", calucateArea)
+	mux.HandleFunc("/area-calculator", getValues)
+	mux.HandleFunc("/area-calculator-2", calculateArea)
 
 	// create a file server
-    fileServer := http.FileServer(http.Dir("./ui/static/"))
-	
+	fileServer := http.FileServer(http.Dir("./ui/static/"))
+
 	// create a url mapping for a static directory
-    mux.Handle("/static/", http.StripPrefix("/static", fileServer))
+	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
 	//create a web server
 	log.Println("Starting server on port :4000")
