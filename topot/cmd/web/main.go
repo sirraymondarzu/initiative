@@ -31,9 +31,17 @@ func displayTime(w http.ResponseWriter, r *http.Request) {
 		Time:    localTime,
 		Message: "Greetings Raymond! I hope you have a lovely day.",
 	}
-
 	// step 3: do the substitution (template engine)
 	ts.Execute(w, data)
+}
+
+func getValues(w http.ResponseWriter, r *http.Request) {
+	
+
+}
+func calucateArea(w http.ResponseWriter, r *http.Request) {
+	
+
 }
 
 func main() {
@@ -43,13 +51,14 @@ func main() {
 
 	// url for time
 	mux.HandleFunc("/time", displayTime)
+	mux.HandleFunc("area-calculator", getValues)
+	mux.HandleFunc("area-calculator-2", calucateArea)
 
 	// create a file server
-
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
+    fileServer := http.FileServer(http.Dir("./ui/static/"))
+	
 	// create a url mapping for a static directory
-
-	mux.Handle("/resource/", http.StripPrefix("/resource", fileServer))
+    mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
 	//create a web server
 	log.Println("Starting server on port :4000")
