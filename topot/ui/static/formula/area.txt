@@ -1,1 +1,1 @@
-area= lengt * width
+area= length * width
